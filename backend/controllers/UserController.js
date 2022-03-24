@@ -1,11 +1,13 @@
 const User = require("../models/User");
 
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
+
+//helpers
 
 const createUserToken = require("../helpers/create-user-token");
-const getToken = require('../helpers/get-token')
-
+const getToken = require("../helpers/get-token");
+const getUserByToken = require('../helpers/get-user-by-token')
 module.exports = class UserController {
   static async register(req, res) {
     const { name, email, phone, password, confirmpassword } = req.body;
@@ -93,9 +95,7 @@ module.exports = class UserController {
     const checkPassword = await bcrypt.compare(password, user.password);
 
     if (!checkPassword) {
-      res
-        .status(422)
-        .json({ message: "Senha inválida" });
+      res.status(422).json({ message: "Senha inválida" });
       return;
     }
 
@@ -103,44 +103,85 @@ module.exports = class UserController {
   }
 
   static async checkUser(req, res) {
-    let currentUser
-    
-    if(req.headers.authorization){
+    let currentUser;
 
-      const token = getToken(req)
-      const decoded = jwt.verify(token, 'nossosecret')
+    if (req.headers.authorization) {
+      const token = getToken(req);
+      const decoded = jwt.verify(token, "nossosecret");
 
-      currentUser = await User.findById(decoded.id)
+      currentUser = await User.findById(decoded.id);
 
-      currentUser.password = undefined
-
-    }else{
-      currentUser = null
+      currentUser.password = undefined;
+    } else {
+      currentUser = null;
     }
 
-    res.status(200).send(currentUser)
+    res.status(200).send(currentUser);
   }
 
   static async getUserById(req, res) {
-    const id = req.params.id 
+    const id = req.params.id;
 
-    const user = await User.findById(id).select('-password')
+    const user = await User.findById(id).select("-password");
 
-    if(!user) {
+    if (!user) {
       res.status(422).json({
         message: "Usuário não encontrado",
-      })
+      });
 
-      return
+      return;
     }
 
-    res.status(200).json({ user })
+    res.status(200).json({ user });
   }
 
   static async editUser(req, res) {
-    res.status(200).json({
-      message: "Deu certo Update",
-    })
-    return
+    const id = req.params.id;
+
+
+    //check if user exists
+    const token = getToken(req)
+    const user = await getUserByToken(token)
+
+
+    const {name, email, phone, password, confirmpassword} = req.body
+
+    let image = ''
+
+    //validations
+    if (!name) {
+      res.status(422).json({ message: "O nome é obrigatorio" });
+      return;
+    }
+    if (!email) {
+      res.status(422).json({ message: "O e-mail é obrigatorio" });
+      return;
+    }
+
+    //check if email has already taken
+    const userExists = await User.findOne({email:email});
+
+    if (user.email !== email && userExists) {
+      res.status(422).json({
+        message: "Por favor, utilize outro e-mail!",
+      });
+      return;
+    }
+
+    user.email = email
+
+    if (!phone) {
+      res.status(422).json({ message: "O telefone é obrigatorio" });
+      return;
+    }
+    if (!password) {
+      res.status(422).json({ message: "A senha é obrigatorio" });
+      return;
+    }
+    if (!confirmpassword) {
+      res.status(422).json({ message: "A confirmação de senha é obrigatorio" });
+      return;
+    }
+  
   }
 };
