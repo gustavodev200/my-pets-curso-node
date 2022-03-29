@@ -91,7 +91,7 @@ module.exports = class UserController {
       return;
     }
 
-    //check if password match with db password
+    //check igif password match with db password
     const checkPassword = await bcrypt.compare(password, user.password);
 
     if (!checkPassword) {
