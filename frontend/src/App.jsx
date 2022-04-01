@@ -9,6 +9,7 @@ import {
 // Components
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
+import Container from './components/layout/Container'
 
 // Pages
 import Login from "./components/pages/Auth/Login";
@@ -19,14 +20,16 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        {/* <Route path="/users" element={<Users />} /> */}
-        {/* <Route path="/allusers" element={<Navigate to="/users" />} /> */}
-        {/* <Route path="/contact" element={<Contact />} /> */}
-      </Routes>
+      <Container>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          {/* <Route path="/users" element={<Users />} /> */}
+          {/* <Route path="/allusers" element={<Navigate to="/users" />} /> */}
+          {/* <Route path="/contact" element={<Contact />} /> */}
+        </Routes>
+      </Container>
       <Footer />
     </Router>
   );

@@ -1,6 +1,8 @@
+import styles from './Footer.module.css'
+
 const Footer = () => {
     return ( 
-        <footer>
+        <footer className={styles.footer}>
             <p><span className="bold">Get A Pet</span> &copy; 2022</p>
         </footer>
      );
