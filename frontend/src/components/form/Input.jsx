@@ -5,7 +5,7 @@ const Input = ({
   text,
   name,
   placeholder,
-  handleOnchange,
+  handleOnChange,
   value,
   multiple,
 }) => {
@@ -17,7 +17,7 @@ const Input = ({
         name={name}
         id={name}
         placeholder={placeholder}
-        onChange={handleOnchange}
+        onChange={handleOnChange}
         value={value}
         {...(multiple) ? {multiple} : ''}
       />
